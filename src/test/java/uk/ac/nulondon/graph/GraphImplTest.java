@@ -1,12 +1,12 @@
 package uk.ac.nulondon.graph;
 
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-class GraphListImplTest {
+class GraphImplTest {
 
     Graph<String> usaGraph;
 
@@ -17,8 +17,13 @@ class GraphListImplTest {
     }
 
     @Test
+    void getVertices() {
+        assertThat(usaGraph.getVertices()).hasSize(12);
+    }
+
+    @Test
     void size() {
-        AssertionsForClassTypes.assertThat(usaGraph.getSize()).isEqualTo(12);
+        assertThat(usaGraph.getSize()).isEqualTo(12);
     }
 
     @Test
@@ -38,16 +43,36 @@ class GraphListImplTest {
     }
 
     @Test
-    void removeVertex(){
-        usaGraph.removeVertex("Oakland");
+    void removeVertex() {
+        assertThat(usaGraph.removeVertex("Oakland")).isTrue();
         assertThat(usaGraph.getDegree("SF")).isEqualTo(2);
         assertThat(usaGraph.getDegree("Denver")).isEqualTo(4);
     }
 
     @Test
-    void removeEdge(){
-        usaGraph.removeEdge("SF", "Oakland");
+    void removeUnknownVertex() {
+        assertThat(usaGraph.removeVertex("London")).isFalse();
+    }
+
+    @Test
+    void addExistingEdge() {
+        assertThat(usaGraph.addEdge("Denver", "Oakland")).isFalse();
+    }
+
+    @Test
+    void addExistingVertex() {
+        assertThat(usaGraph.addVertex("NY")).isFalse();
+    }
+
+    @Test
+    void removeEdge() {
+        assertThat(usaGraph.removeEdge("SF", "Oakland")).isTrue();
         assertThat(usaGraph.getDegree("SF")).isEqualTo(2);
         assertThat(usaGraph.getDegree("Oakland")).isEqualTo(2);
+    }
+
+    @Test
+    void removeUnknownEdge() {
+        assertThat(usaGraph.removeEdge("LA", "NY")).isFalse();
     }
 }
