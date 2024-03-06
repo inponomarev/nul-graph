@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class GraphListImpl<V> implements Graph<V> {
 
-    private Map<V, List<V>> adjacencyLists = new HashMap<>();
+    private final Map<V, List<V>> adjacencyLists = new HashMap<>();
 
     @Override
     public int getSize() {

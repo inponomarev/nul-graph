@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class GraphMatrixImpl<V> implements Graph<V> {
 
-    Map<V, Integer> vertices = new HashMap<>();
-    BitSet matrix = new BitSet();
+    private final Map<V, Integer> vertices = new HashMap<>();
+    private final BitSet matrix = new BitSet();
 
-    int matrixWidth;
+    private int matrixWidth;
 
     private int getIndex(int x, int y) {
         return y * matrixWidth + x;

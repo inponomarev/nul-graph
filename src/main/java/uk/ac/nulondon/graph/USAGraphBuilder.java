@@ -38,4 +38,11 @@ public class USAGraphBuilder {
         graph.addEdge("Atlanta", "Miami");
         graph.addEdge("NY", "Boston");
     }
+
+    public static void split(Graph<String> graph) {
+        graph.removeVertex("KC");
+        graph.removeEdge("Oakland", "Chicago");
+        graph.removeEdge("Denver", "Chicago");
+        graph.removeEdge("LA", "Dallas");
+    }
 }

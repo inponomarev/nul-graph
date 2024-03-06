@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,12 +32,19 @@ public interface Graph<V> {
     boolean removeEdge(V from, V to);
 
     default String visualize() {
+        return visualize(Collections.emptySet());
+    }
+
+    default String visualize(Set<V> highlighted) {
         Set<String> visited = new HashSet<>();
         try (StringWriter sw = new StringWriter();
              PrintWriter pw = new PrintWriter(sw)) {
             pw.println("graph G {");
             pw.println("  layout=\"neato\";");
             for (V vertex : getVertices()) {
+                if (highlighted.contains(vertex)) {
+                    pw.printf("  %s[style=filled,fillcolor=yellow];%n", vertex);
+                }
                 for (V neighbour : getNeighbours(vertex)) {
                     String edge = String.format("  %s--%s;", vertex, neighbour);
                     String reversed = String.format("  %s--%s;", neighbour, vertex);
