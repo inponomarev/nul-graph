@@ -9,6 +9,7 @@ public class GraphListImpl<V> implements Graph<V> {
 
     private final Map<V, List<V>> adjacencyLists = new HashMap<>();
 
+
     @Override
     public int getSize() {
         return adjacencyLists.size();
@@ -16,7 +17,7 @@ public class GraphListImpl<V> implements Graph<V> {
 
     @Override
     public List<V> getVertices() {
-        return adjacencyLists.keySet().stream().toList();
+        return new ArrayList<>(adjacencyLists.keySet());
     }
 
     @Override
@@ -28,7 +29,6 @@ public class GraphListImpl<V> implements Graph<V> {
     public int getDegree(V vertex) {
         return adjacencyLists.get(vertex).size();
     }
-
 
     @Override
     public void clear() {
@@ -44,8 +44,9 @@ public class GraphListImpl<V> implements Graph<V> {
     public boolean addEdge(V from, V to) {
         List<V> fromList = adjacencyLists.get(from);
         List<V> toList = adjacencyLists.get(to);
-        if (fromList.contains(to) && toList.contains(from))
+        if (fromList.contains(to) && toList.contains(from)) {
             return false;
+        }
         fromList.add(to);
         toList.add(from);
         return true;
@@ -54,8 +55,7 @@ public class GraphListImpl<V> implements Graph<V> {
     @Override
     public boolean removeVertex(V vertex) {
         List<V> neighbours = adjacencyLists.remove(vertex);
-        if (neighbours == null)
-            return false;
+        if (neighbours == null) return false;
         for (V neighbour : neighbours) {
             adjacencyLists.get(neighbour).remove(vertex);
         }
@@ -64,13 +64,6 @@ public class GraphListImpl<V> implements Graph<V> {
 
     @Override
     public boolean removeEdge(V from, V to) {
-        List<V> fromList = adjacencyLists.get(from);
-        List<V> toList = adjacencyLists.get(to);
-        if (fromList.contains(to) && toList.contains(from)) {
-            fromList.remove(to);
-            toList.remove(from);
-            return true;
-        }
-        return false;
+        return adjacencyLists.get(from).remove(to) && adjacencyLists.get(to).remove(from);
     }
 }

@@ -1,55 +1,17 @@
 package uk.ac.nulondon.graph;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GraphMatrixImpl<V> implements Graph<V> {
 
     private final Map<V, Integer> vertices = new HashMap<>();
     private final BitSet matrix = new BitSet();
-
-    private int matrixWidth;
+    int matrixWidth = 0;
 
     private int getIndex(int x, int y) {
         return y * matrixWidth + x;
     }
 
-    private boolean setAdjacency(int from, int to) {
-        int i = getIndex(from, to);
-        int j = getIndex(to, from);
-        if (matrix.get(i) && matrix.get(j)) {
-            return false;
-        } else {
-            matrix.set(i);
-            matrix.set(j);
-            return true;
-        }
-    }
-
-    private boolean removeAdjacency(int from, int to) {
-        int i = getIndex(from, to);
-        int j = getIndex(to, from);
-        if (matrix.get(i) && matrix.get(j)) {
-            matrix.clear(i);
-            matrix.clear(j);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private List<Integer> getAdjacent(int i) {
-        List<Integer> result = new ArrayList<>();
-        for (int x = 0; x < matrixWidth; x++) {
-            if (matrix.get(getIndex(x, i))) {
-                result.add(x);
-            }
-        }
-        return result;
-    }
 
     @Override
     public int getSize() {
@@ -58,22 +20,26 @@ public class GraphMatrixImpl<V> implements Graph<V> {
 
     @Override
     public List<V> getVertices() {
-        return vertices.keySet().stream().toList();
+        return new ArrayList<>(vertices.keySet());
     }
 
     @Override
     public List<V> getNeighbours(V vertex) {
         int index = vertices.get(vertex);
-        List<Integer> adjacent = getAdjacent(index);
+        Set<Integer> adjacentIndices = new HashSet<>();
+        for (int i = 0; i < matrixWidth; i++) {
+            if (matrix.get(getIndex(index, i))){
+                adjacentIndices.add(i);
+            }
+        }
         List<V> result = new ArrayList<>();
-        for (V v : vertices.keySet()) {
-            if (adjacent.contains(vertices.get(v))) {
+        for (V v: vertices.keySet()) {
+            if (adjacentIndices.contains(vertices.get(v))){
                 result.add(v);
             }
         }
         return result;
     }
-
 
     @Override
     public int getDegree(V vertex) {
@@ -83,18 +49,15 @@ public class GraphMatrixImpl<V> implements Graph<V> {
     @Override
     public void clear() {
         vertices.clear();
-        matrix.clear();
-        matrixWidth = 0;
     }
 
     @Override
     public boolean addVertex(V vertex) {
-        //Wil not work if matrix is not empty!
-        if (vertices.get(vertex) == null) {
+        if (vertices.containsKey(vertex)) {
+            return false;
+        } else {
             vertices.put(vertex, ++matrixWidth);
             return true;
-        } else {
-            return false;
         }
     }
 
@@ -102,7 +65,12 @@ public class GraphMatrixImpl<V> implements Graph<V> {
     public boolean addEdge(V from, V to) {
         int fromIndex = vertices.get(from);
         int toIndex = vertices.get(to);
-        return setAdjacency(fromIndex, toIndex);
+        if (matrix.get(getIndex(fromIndex, toIndex)))
+            return false;
+
+        matrix.set(getIndex(fromIndex, toIndex));
+        matrix.set(getIndex(toIndex, fromIndex));
+        return true;
     }
 
     @Override
@@ -114,6 +82,12 @@ public class GraphMatrixImpl<V> implements Graph<V> {
     public boolean removeEdge(V from, V to) {
         int fromIndex = vertices.get(from);
         int toIndex = vertices.get(to);
-        return removeAdjacency(fromIndex, toIndex);
+        if (matrix.get(getIndex(fromIndex, toIndex))) {
+            matrix.clear(getIndex(fromIndex, toIndex));
+            matrix.clear(getIndex(toIndex, fromIndex));
+            return true;
+        } else {
+            return false;
+        }
     }
 }

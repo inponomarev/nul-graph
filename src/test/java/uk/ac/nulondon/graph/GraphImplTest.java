@@ -60,8 +60,18 @@ class GraphImplTest {
     }
 
     @Test
+    void addNewEdge() {
+        assertThat(usaGraph.addEdge("Denver", "NY")).isTrue();
+    }
+
+    @Test
     void addExistingVertex() {
         assertThat(usaGraph.addVertex("NY")).isFalse();
+    }
+
+    @Test
+    void addNewVertex() {
+        assertThat(usaGraph.addVertex("NYC")).isTrue();
     }
 
     @Test
