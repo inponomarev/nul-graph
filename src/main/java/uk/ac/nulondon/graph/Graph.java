@@ -41,6 +41,7 @@ public interface Graph<V> {
              PrintWriter pw = new PrintWriter(sw)) {
             pw.println("graph G {");
             pw.println("  layout=\"neato\";");
+            pw.println("  edge[len=1.3];");
             for (V vertex : getVertices()) {
                 if (highlighted.contains(vertex)) {
                     pw.printf("  %s[style=filled,fillcolor=yellow];%n", vertex);
@@ -63,8 +64,9 @@ public interface Graph<V> {
     }
 
     static void main(String[] args) throws IOException, URISyntaxException {
-        Graph<String> graph = new GraphMatrixImpl<>();
+        Graph<String> graph = new GraphListImpl<>();
         USAGraphBuilder.buildGraph(graph);
+        //USAGraphBuilder.split(graph);
         String dot = graph.visualize();
         show(dot);
     }
